@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom GA Card Maker</title>
+  <style>
+    body {
+      font-family: Linux Biolinum O, sans-serif;
+      margin: 0;
+      color: #000000;
+    }
+
+    #header {
+      text-align: center;
+    }
+
+    #content {
+      display: flex;
+      justify-content: left;
+      align-items: left;
+      height: 70vh;
+    }
+
+    #cardContainer {
+      width: 500px;
+      height: 700px;
+      position:relative;
+      background-size: cover;
+      cursor: move;
+    }
+
+    #cardCoverContainer {
+      width: 500px;
+      height: 700px;
+      top:0px;
+      position: absolute;
+      z-index: 100; 
+      background-color:#fff;
+    }   
+
+    #cardRenderContainer {
+      width: 500px;
+      height: 700px;
+      top:0px;
+      position: absolute;
+      z-index: 100; 
+    }
+
+    #cardRenderLog {
+      position: absolute;
+      top: 720px;
+      left: 100px;
+    }
+
+    .cardSection {
+      padding: 0px;
+    }
+
+    #cardForm {
+      padding: 10px;
+    }
+
+    #cardTitle {
+      position: absolute;
+      width: 500px;
+      top:33px;
+      font-wight:bold;
+      letter-spacing: 0.5px;
+      font-size: 27px;
+      font-family: 'Linux Libertine Display O', serif;
+      text-align: center;
+    }
+
+    #cardArtClip {
+      position: absolute;
+      width: 450px;
+      height: 400px;
+      left: 25px;
+      top:60px;
+      clip: rect(0px,450px,400px,0px);
+    }
+
+    #cardArt {
+      position:relative;
+      width: 450px;
+      height: 400px;
+    }
+
+    #cardElementBackground {
+      -webkit-border-radius:16px;
+      position: absolute;
+      background-size: cover;
+      width: 500px;
+      height: 700px;
+    }
+
+    #cardElement {
+      font-size: 18px;
+      position: absolute;
+      top: 25px;
+      right: 16px;
+      width: 58px;
+      height: 58px;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: cover;
+
+    }
+
+    #cardCostBubble {
+      position: relative;
+      top: 23px;
+      left: 24px;
+      width: 58px;
+      height: 106px;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+      line-height: 40px;
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-align: top;
+    }    
+
+    #cardCost {
+      position: absolute;
+      top: 28px;
+      left: 27px;
+      width: 54px;
+      height: 46px;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+      line-height: 40px;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    #cardTypeBar {
+      position: absolute;      
+      top: 463px;
+      left: 50px;
+      width:400px;
+      height:30px;
+
+      font-size: 18px;
+      font-family: 'Linux Biolinum O', sans-serif;
+      letter-spacing: -0.5px;
+      font-weight:bold;
+    }
+
+    #cardTypeDesc {
+      position:relative;
+      top:-4px;
+      padding-top:5px;
+      padding-bottom:2px;
+      padding-left:12px;
+      padding-right:12px;
+      margin-top:2px;
+      margin-bottom: 2px;
+      height:22px;
+      min-width:40px;
+      display: inline-block;
+      background-size: cover;
+      background-repeat: horizontal;
+    }
+
+    #cardTypePoint {
+      position:relative;
+      margin-top:2px;
+      top:-2px;
+      left:-6px;
+      padding-top:7px;      
+      margin-bottom: 2px;
+      height:22px;
+      min-width:32px;
+      display: inline-block;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+
+    #cardEffectContainer {
+      position: absolute;      
+      top: 496px;
+      left: 40px;
+      right:40px;
+      bottom:60px;
+      line-height: 140px;
+      display:inline-block !important; 
+      font-size: 21px;
+      letter-spacing: -0.4px;
+      font-family: 'Linux Biolinum O', sans-serif;
+      vertical-align: middle;
+    }
+
+    #cardType {
+      position: absolute;
+      top: 463px;
+      left: 28px;
+      width: 30px;
+      height: 30px;
+      background-repeat: no-repeat;
+      background-position: bottom right;
+      background-size: cover;
+    }
+
+    #cardSpeed {
+      position: absolute;
+      bottom: 36px;
+      right: 27px;
+      width: 200px;
+      height: 30px;
+      background-repeat: no-repeat;
+      background-position: bottom right;
+      background-size: contain;
+    }
+
+    #cardStats {
+      position: absolute;
+      bottom: 36px;
+      right: 27px;
+      width: 240px;
+      height: 30px;
+      align-items: right;
+      align-content: right;
+
+    }
+
+    #cardStatsFloater {
+      float:right;
+      display:inline-block;  
+    }
+
+    #cardPower, #cardLife, #cardDurability {
+      width:50px;
+      height: 28px;
+      display:inline-block;
+      background-repeat: no-repeat;
+      background-position: bottom right;
+      background-size: contain;
+      color:#fff;
+      font-size:24px;
+      font-family: 'Linux Biolinum O', sans-serif, bold;
+      text-align: center;
+      vertical-align: middle;
+      padding: 2px 0px 0px 20px;
+    }
+
+    #cardEffect {
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 20px;
+    }
+
+    #cardEffect img {
+      vertical-align: middle;
+      padding: 0px 1px 4px 1px;
+    }
+
+    .effect__icon {
+      -webkit-border-radius:10px;
+      background:#000;
+      color:white;
+      letter-spacing:0.2px;
+      padding: 2px 7px 0px 7px;
+      margin: 0px 0px 0px 0px;
+      font-size:15px;
+      offset-inline-start: 20px;
+      text-align:top;
+    }
+
+    #cardSetRarity {
+      position: absolute;
+      bottom: 16px;
+      left: 21px;
+      width: 200px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-position: bottom left;
+      background-size: contain;
+      color:#fff;
+      font-size: 11px;
+      vertical-align: middle;
+      font-family: 'Linux Biolinum O', sans-serif;      
+    }
+
+    #cardSetRarity img {
+      vertical-align: middle;
+      padding-bottom: 1px;
+    }
+
+    #cardCopyright {
+      position: absolute;
+      bottom: 15px;
+      right: 21px;
+      width: 200px;
+      height: 16px;
+      background-repeat: no-repeat;
+      background-position: bottom right;
+      background-size: contain;
+      color:#fff;
+      font-size: 11px;
+      text-align: right;
+      letter-spacing:0.3px;
+
+      font-family: 'Linux Biolinum O', sans-serif;      
+    }
+
+      #cardForm {
+        width: 30%;
+        marg
+      }
+
+      #cardForm label {
+        display: block;
+      }
+
+      #cardForm input, #cardForm select, #cardForm textarea, #cardForm .pseudoButton {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      #cardForm textarea {
+        height: 140px;
+      }
+
+      #cardForm button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+         width: 100%;
+      }
+
+      #cardForm button:hover {
+        background-color: #45a049;
+      }
+
+  </style>
+</head>
+<body>
+
+  <h1 id="header">Grand Archive Custom Card Imaginer</h1>
+  <div id="content">
+
+    <form id="cardForm">
+      <table border=0 width="100%"><tr>
+        <td><label for="artupload">Card Art:</label></td>
+        <td align="right"><label for="pseudoButton">(Resize and Drag to fit)</label></td>
+      </tr></table>
+      <table border=0 width="100%"><tr>
+        <td><input type="file" id="artupload" name="artupload" accept="image/*"/></td>
+        <td><label class="pseudoButton" onclick="growArt()">+</button></td>
+        <td><label class="pseudoButton" onclick="shrinkArt()">-</button></td>
+      </tr></table></span>
+      <br>
+
+      <label for="title">Card Title:</label>
+      <input type="text" id="title" name="title" oninput="updateText('cardTitle', this.value)" value="Card Title">
+      <br><br>
+
+      <label for="element">Card Element:</label>
+      <select id="element" name="element" onchange="updateImage('cardElementBackground', this.value, 'element-border-')">
+        <option value="Norm">Norm</option>
+        <option value="Fire">Fire</option>
+        <option value="Water">Water</option>
+        <option value="Wind">Wind</option>
+        <option value="Arcane">Arcane</option>
+        <option value="Astra">Astra</option>
+        <option value="Crux">Crux</option>
+        <option value="Luxem">Luxem</option>
+        <option value="Neos">Neos</option>
+        <option value="Techa">Techa</option>
+        <option value="Tera">Tera</option>
+        <option value="Umbra">Umbra</option>
+      </select>
+      <br><br>
+
+      <label for="costbubble">Card Cost Type:</label>
+      <select id="costbubble" name="costbubble" onchange="updateImage('cardCostBubble', this.value, 'cost-')">
+        <option value="Reserve">Reserve</option>
+        <option value="Memory">Memory</option>
+        <option value="Level">Level</option>
+        <option value="Level-Memory">Level-Memory</option>      
+      </select>
+      <br>
+
+      <label for="cost">Card Cost:</label>
+      <input type="number" id="cost" value="0" name="cost" min="0" max="9" pattern="[0-9]" oninput="updateImage('cardCost', this.value, '')">
+      <br><br>
+
+      <label for="subtype">Card Type:</label>
+      <select id="subtype" name="subtype" onchange="updateImage('cardType', this.value, 'card-type-')">
+        <option value="Ally">Ally</option>
+        <option value="Skill">Skill</option>
+        <option value="Champion">Champion</option>
+        <option value="Domain">Domain</option>
+        <option value="Item">Item</option>
+        <option value="Phantasia">Phantasia</option>      
+        <option value="Regalia">Regalia</option>      
+        <option value="Weapon">Weapon</option>
+        <option value="Skill">Skill</option>
+        <option value="Unique">Unique</option>
+      </select>
+      <br>
+
+      <label for="typedesc">Card Type Desc:</label>
+      <input type="text" id="typedesc" name="typedesc" oninput="updateText('cardTypeDesc', this.value)" value="Ally - Tamer Ranger Animal Human">
+      <br><br>
+
+      <label for="effect">Card Effect:</label><br>
+      <textarea id="effect" name="effect" value="Card Effect" oninput="updateText('cardEffect', this.value)">{bonus}Class Bonus{/bonus} +1{sword} <i>(Apply this ability only if your champion's class matches the card's class.)</i>
+<br><br> {tap} this card gains +1{heart}
+<br>
+<br><b>Floating Memory<b>
+      </textarea>
+    </form>
+
+    <div id="cardContainer">
+      <div id="cardArtClip">
+        <img id="cardArt" src="art/defaultart.jpg">
+      </div>
+      <div class="cardSection" id="cardElementBackground"></div>
+      <div class="cardSection" id="cardElement"></div>
+      <div class="cardSection" id="cardTitle">Card Title</div>
+      <div class="cardSection" id="cardTypeBar">
+        <span id="cardTypeDesc">Ally - Tamer Ranger Animal Human</span>
+        <span id="cardTypePoint">&nbsp</span>
+      </div>
+      <div class="cardSection" id="cardType"></div>
+      <div class="cardSection" id="cardCostBubble"></div>
+      <div class="cardSection" id="cardCost"></div>
+      <div class="cardSection" id="cardStats">
+        <div class="cardSection" id="cardStatsFloater">
+          <span class="cardSection" id="cardPower">4</span>
+          <span class="cardSection" id="cardLife">4</span>
+          <span class="cardSection" id="cardDurability">4</span>
+        </div>
+      </div>
+      <div class="cardSection" id="cardEffectContainer"><span id="cardEffect">Card Effect</span></div>
+      <div class="cardSection" id="cardSpeed"></div>
+      <div class="cardSection" id="cardSetRarity"></div>
+      <div class="cardSection" id="cardCopyright">©2024 Crux is Fines</div>
+      <div class="cardSection" id="cardCoverContainer" data-html2canvas-ignore="true"></div>
+      <div class="cardSection" id="cardRenderContainer"></div>
+      <div id="cardRenderLog">Rendered above, right click to download!</div>
+    </div>
+
+
+    <form id="cardForm">
+
+      <label for="power">Card Power:</label>
+      <input type="number" id="power" name="power" min="0" max="99" pattern="[0-9]" oninput="updateStats('cardPower', this.value, 'stat-power')">
+      <br>
+
+      <label for="life">Card Life:</label>
+      <input type="number" id="life" name="life" min="0" max="99" pattern="[0-9]" oninput="updateStats('cardLife', this.value, 'stat-life')">
+      <br>
+
+      <label for="durability">Card Durability:</label>
+      <input type="number" id="durability" name="durability" min="0" max="99" pattern="[0-9]" oninput="updateStats('cardDurability', this.value, 'stat-durability')">
+      <br><br>
+
+      <label for="speed">Card Speed:</label>
+      <select id="speed" name="speed" onchange="updateImage('cardSpeed', this.value, 'speed-')">
+        <option value="None">None</option>
+        <option value="Fast">Fast</option>
+        <option value="Slow">Slow</option>
+      </select>
+      <br><br>
+
+      <label for="setrarity">Card Set/Rarity:</label>
+      <textarea id="setrarity" name="setrarity" oninput="updateText('cardSetRarity', this.value)">FTC {dot} EN - 001 {ultra rare} {dot} illust: Bing Chilling</textarea>
+      <br><br>
+
+      <label for="copyright">Copyright:</label>
+      <textarea id="copyright" name="copyright" oninput="updateText('cardCopyright', this.value)">©2024 Crux is Fine</textarea>
+      <br><br>
+
+      <button type="button" onclick="render()">render</button>
+
+    </form>
+  
+</div>
+
+  <script src="html2canvas.min.js"></script>
+  <script src="jquery-3.7.1.min.js"></script>
+  <script>
+    function baseURL() {
+      return "";
+    }
+
+    function substituteTextForImages(text) {
+
+      var substituteList = [
+        ["{tap}",  "<img src='"+baseURL()+"images/inline-tap.png'>"],
+        ["{sword}","<img src='"+baseURL()+"images/inline-sword.png'>"],
+        ["{heart}","<img src='"+baseURL()+"images/inline-heart.png'>"],
+        ["{common}","<img src='"+baseURL()+"images/common.png'>"],
+        ["{uncommon}","<img src='"+baseURL()+"images/uncommon.png'>"],
+        ["{rare}","<img src='"+baseURL()+"images/rare.png'>"],
+        ["{super rare}","<img src='"+baseURL()+"images/super rare.png'>"],
+        ["{ultra rare}","<img src='"+baseURL()+"images/ultra rare.png'>"],
+        ["{dot}","<img src='"+baseURL()+"images/dot.png'>"],
+        ["{bonus}","<span class=\"effect__icon\">"],
+        ["{/bonus}","</span>"],
+
+      ]
+      var text2 = text;
+      substituteList.forEach(x => text2=text2.replace(x[0], x[1]) );
+      substituteList.forEach(x => text2=text2.replace(x[0], x[1]) );
+      return text2;
+    }
+
+    function hideRenderContainer(){
+      document.getElementById("cardCoverContainer").style.visibility="hidden";
+      document.getElementById("cardRenderContainer").style.visibility="hidden";
+      document.getElementById("cardRenderLog").style.visibility="hidden";      
+    }
+
+    function updateText(sectionId, value) {
+      document.getElementById(sectionId).innerHTML = substituteTextForImages(value);
+      hideRenderContainer();
+    }
+
+    // Function to change background image based on the selected element
+    function updateImage(sectionId, value, format) {
+      document.getElementById(sectionId).style.backgroundImage = `url('`+ baseURL() +`images/${format.toLowerCase()}${value.toLowerCase()}.png')`;
+      hideRenderContainer();
+    }
+
+    function updateArt(sectionId, value, format) {
+      document.getElementById('cardArt').style.backgroundImage = `url('`+ baseURL() +`art/${format.toLowerCase()}${value.toLowerCase()}')`;
+    }
+
+    function updateStats(sectionId, value, format) {
+      var element = document.getElementById(sectionId);
+      element.innerText = value;
+      if (value==''){
+        element.style.visibility=`hidden`;
+        element.style.position=`absolute`;
+      } else {
+        element.style.visibility=`visible`;
+        element.style.position=`relative`;
+      }
+      hideRenderContainer();
+    }
+
+    function render(){
+      if (document.getElementById("cardRenderContainer").style.visibility!="hidden"){
+        return
+      }
+      
+
+          document.getElementById("cardCoverContainer").style.visibility="hidden";
+          document.getElementById("cardRenderContainer").style.visibility="hidden";
+
+          $("#cardCoverContainer").fadeOut(1, function(){
+            document.getElementById("cardCoverContainer").style.visibility="visible";            
+            $("#cardCoverContainer").fadeIn(100, function(){            
+            $(".effect__icon").css({'padding': '1px 7px 1px 7px'})
+
+            html2canvas(document.querySelector("#cardContainer")).then(canvas => {
+              $("#cardRenderContainer").replaceWith(canvas);
+              canvas.id="cardRenderContainer";
+              canvas.visibility = "hidden"              
+
+              $("#cardRenderContainer").fadeOut(1, function(){
+
+                document.getElementById("cardRenderContainer").style.visibility="visible";
+                document.getElementById("cardRenderLog").style.visibility="visible";                
+                $("#cardRenderContainer").fadeIn(1000);
+              });
+            });
+          });
+
+
+      });
+      
+    }
+
+    function growArt(){
+      var width = $("#cardArt").width()
+      var height = $("#cardArt").height()
+      $("#cardArt").width(width/0.9)
+      $("#cardArt").height(height/0.9)
+    }
+    function shrinkArt(){
+      var width = $("#cardArt").width()
+      var height = $("#cardArt").height()
+      $("#cardArt").width(width*0.9)
+      $("#cardArt").height(height*0.9)
+    }
+
+    dragElement(document.getElementById("cardContainer"), document.getElementById("cardArt"));
+
+    function dragElement(dragTarget,mover) {
+      var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        dragTarget.onmousedown = dragMouseDown;
+
+      function dragMouseDown(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // get the mouse cursor position at startup:
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        // call a function whenever the cursor moves:
+        document.onmousemove = elementDrag;
+      }
+
+      function elementDrag(e) {
+        e = e || window.event;
+        e.preventDefault();
+        // calculate the new cursor position:
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        // set the element's new position:
+        mover.style.top = (mover.offsetTop - pos2) + "px";
+        mover.style.left = (mover.offsetLeft - pos1) + "px";
+      }
+
+      function closeDragElement() {
+        // stop moving when mouse button is released:
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
+    }
+
+    window.onload = function () {
+      updateImage('cardElementBackground', document.getElementById('element').value, 'element-border-');
+      updateImage('cardType', document.getElementById('subtype').value, 'card-type-');
+      updateImage('cardCostBubble', document.getElementById('costbubble').value, 'cost-');
+     
+      updateImage('cardTypeDesc', 'type-bar-middle', '');
+      updateImage('cardTypePoint', 'type-bar-point', '');
+
+      updateImage('cardCost', document.getElementById('cost').value, '')
+
+      updateText('cardEffect', document.getElementById('effect').value);
+      updateText('cardSetRarity', document.getElementById('setrarity').value);
+      updateText('cardCopyright', document.getElementById('copyright').value);
+
+      updateStats('cardPower', document.getElementById('power').value)
+      updateStats('cardLife', document.getElementById('life').value)
+      updateStats('cardDurability', document.getElementById('durability').value)
+
+      updateImage('cardPower', 'stat-power', '');
+      updateImage('cardLife', 'stat-life', '');
+      updateImage('cardDurability', 'stat-durability', '');
+      
+      $("#artupload").change(function(e) {
+
+        for (var i = 0; i < e.originalEvent.srcElement.files.length; i++) {
+            
+            var file = e.originalEvent.srcElement.files[i];
+            
+            var img = document.createElement("img");
+            var reader = new FileReader();
+            reader.onloadend = function() {
+                 img.src = reader.result;
+
+            }
+            reader.readAsDataURL(file);
+            $("#cardArt").replaceWith(img);
+            img.id = "cardArt"
+            dragElement(document.getElementById("cardContainer"), document.getElementById("cardArt"));
+        }
+      });
+    };
+
+  </script>
+</body>
+</html>
