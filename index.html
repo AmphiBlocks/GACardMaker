@@ -95,8 +95,7 @@
 
     #cardArt {
       position:relative;
-      width: 450px;
-      height: 400px;
+
     }
 
     #cardElementBackground {
@@ -436,7 +435,7 @@
 
     <div id="cardContainer">
       <div id="cardArtClip">
-        <img id="cardArt" src="art/defaultart.jpg">
+        <img id="cardArt" width="450" src="art/defaultart.jpg">
       </div>
       <div class="cardSection" id="cardElementBackground"></div>
       <div class="cardSection" id="cardElement"></div>
@@ -676,6 +675,7 @@
             var file = e.originalEvent.srcElement.files[i];
             
             var img = document.createElement("img");
+
             var reader = new FileReader();
             reader.onloadend = function() {
                  img.src = reader.result;
