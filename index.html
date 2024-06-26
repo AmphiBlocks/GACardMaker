@@ -6,19 +6,27 @@
   <title>Custom GA Card Maker</title>
   <style>
     @font-face {
-      font-family: 'Linux Biolinum O', sans-serif;
-      src: url('fonts/LinBiolinum_R.otf') format('opentype');
-      src: url('fonts/LinBiolinum_RB.otf') format('opentype');
-      src: url('fonts/LinBiolinum_RI.otf') format('opentype');
+      font-family: 'CardText';
+      src: url('fonts/LinBiolinum_R.otf');
     }
 
     @font-face {
-      font-family: 'Linux Libertine Display O', serif;
-      src: url('fonts/LinLibertine_R.otf') format('opentype');
+      font-family: 'CardTextBold';
+      src: url('fonts/LinBiolinum_RB.otf');
+    }
+
+    @font-face {
+      font-family: 'CardTextItalic';
+      src: url('fonts/LinBiolinum_RI.otf');
+    }
+
+    @font-face {
+      font-family: 'CardTitle';
+      src: url('fonts/LinLibertine_R.otf');
     }
 
     body {
-      font-family: 'Linux Biolinum O', sans-serif
+      font-family: 'CardText', 'Linux Biolinum O', sans-serif
       margin: 0;
       color: #000000;
     }
@@ -80,7 +88,7 @@
       font-wight:bold;
       letter-spacing: 0.5px;
       font-size: 27px;
-      font-family: 'Linux Libertine Display O', serif;
+      font-family: 'CardTitle', 'Linux Libertine Display O', serif;
       text-align: center;
     }
 
@@ -156,7 +164,7 @@
       height:30px;
 
       font-size: 18px;
-      font-family: 'Linux Biolinum O', sans-serif;
+      font-family: 'CardText', 'Linux Biolinum O', sans-serif;
       letter-spacing: -0.5px;
       font-weight:bold;
     }
@@ -201,7 +209,7 @@
       display:inline-block !important; 
       font-size: 21px;
       letter-spacing: -0.4px;
-      font-family: 'Linux Biolinum O', sans-serif;
+      font-family: 'CardText', 'Linux Biolinum O', sans-serif;
       vertical-align: middle;
     }
 
@@ -252,7 +260,7 @@
       background-size: contain;
       color:#fff;
       font-size:24px;
-      font-family: 'Linux Biolinum O', sans-serif, bold;
+      font-family: 'CardText', 'Linux Biolinum O', sans-serif, bold;
       text-align: center;
       vertical-align: middle;
       padding: 2px 0px 0px 20px;
@@ -293,7 +301,7 @@
       color:#fff;
       font-size: 11px;
       vertical-align: middle;
-      font-family: 'Linux Biolinum O', sans-serif;      
+      font-family: 'CardText', 'Linux Biolinum O', sans-serif;      
     }
 
     #cardSetRarity img {
@@ -315,7 +323,7 @@
       text-align: right;
       letter-spacing:0.3px;
 
-      font-family: 'Linux Biolinum O', sans-serif;      
+      font-family: 'CardText', 'Linux Biolinum O', sans-serif;      
     }
 
       #cardForm {
