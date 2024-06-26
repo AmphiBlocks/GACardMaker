@@ -78,9 +78,9 @@
 
       <label for="effect">Card Effect:</label><br>
       <textarea id="effect" name="effect" value="Card Effect" oninput="updateText('cardEffect', this.value)">{bonus}Class Bonus{/bonus} +1{sword} <i>(Apply this ability only if your champion's class matches the card's class.)</i>
-<br><br> {tap} this card gains +1{heart}
-<br>
-<br><b>Floating Memory<b>
+      <br><br> {tap} this card gains +1{heart}
+      <br>
+      <br><b>Floating Memory<b>
       </textarea>
     </form>
 
@@ -91,8 +91,8 @@
       <div class="cardSection" id="cardElementBackground"></div>
       <div class="cardSection" id="cardElement"></div>
       <div class="cardSection" id="cardTitle">Card Title</div>
-      <div class="cardSection" id="cardTypeBar">
-        <span id="cardTypeDesc">Ally - Tamer Ranger Animal Human</span>
+      <div class="cardSection" id="cardTypeLine">
+        <span id="cardTypeBar"> <span id="cardTypeText">Ally - Tamer Ranger Animal Human</span></span>
         <span id="cardTypePoint">&nbsp</span>
       </div>
       <div class="cardSection" id="cardType"></div>
@@ -226,7 +226,8 @@
           $("#cardCoverContainer").fadeOut(1, function(){
             document.getElementById("cardCoverContainer").style.visibility="visible";            
             $("#cardCoverContainer").fadeIn(100, function(){            
-            $(".effect__icon").css({'padding': '1px 7px 1px 7px'})
+            $(".effect__icon").css({'padding': '1px 7px 1px 7px'});
+            $("#cardTypeText").css({'bottom' : '2px'});
 
             html2canvas(document.querySelector("#cardContainer")).then(canvas => {
               $("#cardRenderContainer").replaceWith(canvas);
@@ -302,7 +303,7 @@
       updateImage('cardType', document.getElementById('subtype').value, 'card-type-');
       updateImage('cardCostBubble', document.getElementById('costbubble').value, 'cost-');
      
-      updateImage('cardTypeDesc', 'type-bar-middle', '');
+      updateImage('cardTypeBar', 'type-bar-middle', '');
       updateImage('cardTypePoint', 'type-bar-point', '');
 
       updateImage('cardCost', document.getElementById('cost').value, '')
