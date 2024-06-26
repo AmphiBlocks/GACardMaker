@@ -65,10 +65,20 @@ body {
   z-index: 100; 
 }
 
-#cardRenderLog {
+#cardRenderResults {
   position: absolute;
+  align-items: center;
+  text-align: center;
   top: 720px;
   left: 100px;
+}
+
+#cardShareURL {
+  padding:4px;
+}
+
+#copyURLButton {
+  padding:4px;
 }
 
 .cardSection {

@@ -111,7 +111,10 @@
       <div class="cardSection" id="cardCopyright">©2024 Crux is Fines</div>
       <div class="cardSection" id="cardCoverContainer" data-html2canvas-ignore="true"></div>
       <div class="cardSection" id="cardRenderContainer"></div>
-      <div id="cardRenderLog">Rendered above, right click to download!</div>
+      <div id="cardRenderResults">
+        <div id="cardRenderLog">Rendered above, right click to download!</div>
+        <input id="cardShareURL"></input> <button id="copyURLButton">Copy URL for Sharing</button>
+      </div>
     </div>
 
 
@@ -183,7 +186,7 @@
     function hideRenderContainer(){
       document.getElementById("cardCoverContainer").style.visibility="hidden";
       document.getElementById("cardRenderContainer").style.visibility="hidden";
-      document.getElementById("cardRenderLog").style.visibility="hidden";      
+      document.getElementById("cardRenderResults").style.visibility="hidden";      
     }
 
     function updateText(sectionId, value) {
@@ -237,7 +240,7 @@
               $("#cardRenderContainer").fadeOut(1, function(){
 
                 document.getElementById("cardRenderContainer").style.visibility="visible";
-                document.getElementById("cardRenderLog").style.visibility="visible";                
+                document.getElementById("cardRenderResults").style.visibility="visible";                
                 $("#cardRenderContainer").fadeIn(1000);
               });
             });
@@ -340,6 +343,72 @@
         }
       });
     };
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const fields = [
+            'title', 'element', 'cost', 'subtype', 'typedesc',
+            'effect', 'power', 'life', 'durability', 'speed',
+            'setrarity', 'copyright'
+        ];
+
+        function updateField(id, value) {
+            const field = document.getElementById(id);
+            if (field) {
+                field.value = decodeURIComponent(value);
+                field.dispatchEvent(new Event('input')); // Trigger input event for dynamic updates
+            }
+        }
+
+        fields.forEach(field => {
+            if (urlParams.has(field)) {
+                updateField(field, urlParams.get(field));
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const renderButton = document.querySelector('button[onclick="render()"]');
+        const fields = [
+            'title', 'element', 'cost', 'subtype', 'typedesc',
+            'effect', 'power', 'life', 'durability', 'speed',
+            'setrarity', 'copyright'
+        ];
+
+        function getFieldValue(id) {
+            const field = document.getElementById(id);
+            return field ? encodeURIComponent(field.value) : '';
+        }
+
+        function generateURL() {
+            const baseURL = window.location.origin + window.location.pathname;
+            const params = new URLSearchParams();
+            
+            fields.forEach(field => {
+                const value = getFieldValue(field);
+                if (value) {
+                    params.append(field, value);
+                }
+            });
+            
+            return `${baseURL}?${params.toString()}`;
+        }
+
+        renderButton.addEventListener('click', function() {
+            const generatedURL = generateURL();
+            console.log('Generated URL:', generatedURL);
+            $('#cardShareURL').prop("value", generatedURL);
+        });
+    });
+
+    document.getElementById('copyURLButton').addEventListener('click', function() {
+        const urlToCopy = document.getElementById('cardShareURL').value;
+        navigator.clipboard.writeText(urlToCopy).then(() => {
+            alert('URL copied to clipboard');
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+    });
 
   </script>
 </body>
