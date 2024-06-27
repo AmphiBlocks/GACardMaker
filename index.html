@@ -210,9 +210,46 @@
 
 
 
+
+
 function updateArtByURL(value) {
-    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
     const cardArtElement = document.getElementById('cardArt');
+    cardArtElement.onload = function() {
+        
+        // Adjust size here
+        const naturalWidth = cardArtElement.naturalWidth;
+        const naturalHeight = cardArtElement.naturalHeight;
+        const aspectRatio = naturalWidth / naturalHeight;
+
+        let newWidth = naturalWidth;
+        let newHeight = naturalHeight;
+
+        if (newHeight < 400) {
+            newHeight = 400;
+            newWidth = newHeight * aspectRatio;
+        }
+
+        if (newWidth < 450) {
+            newWidth = 450;
+            newHeight = newWidth / aspectRatio;
+        }
+
+        if ((newWidth + parseInt(cardArtElement.style.left, 10)) < 400) cardArtElement.style.left="0px";
+        if ((newHeight + parseInt(cardArtElement.style.top, 10)) < 450) cardArtElement.style.top="0px";
+
+        cardArtElement.style.width = `${newWidth}px`;
+        cardArtElement.style.height = `${newHeight}px`;
+
+        $("#artPosition").prop('value', getCssText(document.getElementById('cardArt')));
+    };
+
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+
+    if ($("#renderButton").attr("warn-cors") == "true" ) {
+      cardArtElement.src = value
+      return
+    }
+
     fetch(proxyUrl + value, {
         headers: {
             'Origin': window.location.origin
@@ -223,43 +260,10 @@ function updateArtByURL(value) {
         const url = URL.createObjectURL(blob);
         cardArtElement.crossOrigin = 'Anonymous'; // Enable CORS support
         cardArtElement.src = url;
-        cardArtElement.onload = function() {
-            if ($("#renderButton").attr("warn-cors") == "true" )
-              return;
-            // Adjust size here
-            const naturalWidth = cardArtElement.naturalWidth;
-            const naturalHeight = cardArtElement.naturalHeight;
-            const aspectRatio = naturalWidth / naturalHeight;
-
-            let newWidth = naturalWidth;
-            let newHeight = naturalHeight;
-
-            if (newHeight < 400) {
-                newHeight = 400;
-                newWidth = newHeight * aspectRatio;
-            }
-
-            if (newWidth < 450) {
-                newWidth = 450;
-                newHeight = newWidth / aspectRatio;
-            }
-
-            if ((newWidth + parseInt(cardArtElement.style.left, 10)) < 400) cardArtElement.style.left="0px";
-            if ((newHeight + parseInt(cardArtElement.style.top, 10)) < 450) cardArtElement.style.top="0px";
-
-            cardArtElement.style.width = `${newWidth}px`;
-            cardArtElement.style.height = `${newHeight}px`;
-
-            $("#artPosition").prop('value', getCssText(document.getElementById('cardArt')));
-        };
-        cardArtElement.onerror = function() {
-          cardArtElement.src = value
-          $("#renderButton").attr("warn-cors", true)          
-        };
     })
     .catch(error => {
-        cardArtElement.src = value
-        $("#renderButton").attr("warn-cors", true)          
+        $("#renderButton").attr("warn-cors", true)
+        updateArtByURL(value);
     });
 }
 
