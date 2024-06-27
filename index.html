@@ -28,7 +28,11 @@
       <br><br>
 
       <label for="element">Card Element:</label>
-      <select id="element" name="element" onchange="updateImage('cardElementBackground', this.value, 'element-border-')">
+      <select id="element" name="element" onchange="
+        updateImage('cardElementBackground', this.value, 'element-border-');
+        updateImage('cardTypeBar', this.value, 'element-bar-', 'webp');
+        updateImage('cardTypePoint', this.value, 'element-point-', 'webp');
+      ">
         <option value="Norm">Norm</option>
         <option value="Fire">Fire</option>
         <option value="Water">Water</option>
@@ -36,11 +40,13 @@
         <option value="Arcane">Arcane</option>
         <option value="Astra">Astra</option>
         <option value="Crux">Crux</option>
+        <option disabled value="Exia">Exia</option>
         <option value="Luxem">Luxem</option>
         <option value="Neos">Neos</option>
-        <option value="Techa">Techa</option>
+        <option disabled value="Techa">Techa</option>
         <option value="Tera">Tera</option>
         <option value="Umbra">Umbra</option>
+        <option disabled value="Wrath">Wrath</option>
       </select>
       <br><br>
 
@@ -195,8 +201,8 @@
     }
 
     // Function to change background image based on the selected element
-    function updateImage(sectionId, value, format) {
-      document.getElementById(sectionId).style.backgroundImage = `url('`+ baseURL() +`images/${format.toLowerCase()}${value.toLowerCase()}.png')`;
+    function updateImage(sectionId, value, format, imagetype="png") {
+      document.getElementById(sectionId).style.backgroundImage = `url('`+ baseURL() +`images/${format.toLowerCase()}${value.toLowerCase()}.${imagetype}')`;
       hideRenderContainer();
     }
 
@@ -306,8 +312,8 @@
       updateImage('cardType', document.getElementById('subtype').value, 'card-type-');
       updateImage('cardCostBubble', document.getElementById('costbubble').value, 'cost-');
      
-      updateImage('cardTypeBar', 'type-bar-middle', '');
-      updateImage('cardTypePoint', 'type-bar-point', '');
+      updateImage('cardTypeBar', document.getElementById('element').value, 'element-bar-', 'webp');
+      updateImage('cardTypePoint', document.getElementById('element').value, 'element-point-', 'webp');
 
       updateImage('cardCost', document.getElementById('cost').value, '')
 
