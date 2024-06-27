@@ -224,8 +224,8 @@ function updateArtByURL(value) {
         cardArtElement.crossOrigin = 'Anonymous'; // Enable CORS support
         cardArtElement.src = url;
         cardArtElement.onload = function() {
-            if ($("#renderButton").attr("warn-cors", true) )
-              return
+            if ($("#renderButton").attr("warn-cors") == "true" )
+              return;
             // Adjust size here
             const naturalWidth = cardArtElement.naturalWidth;
             const naturalHeight = cardArtElement.naturalHeight;
