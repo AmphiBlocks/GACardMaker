@@ -21,7 +21,9 @@
         <td><label class="pseudoButton" onclick="growArt()">+</button></td>
         <td><label class="pseudoButton" onclick="shrinkArt()">-</button></td>
       </tr></table></span>
-      <br>
+      <input id="artURL" value="Paste URL to image" onfocus="this.value=''" oninput="updateArtByURL(this.value)">
+      <input id="artPosition" value="top:5px;left:6px;width:450px;height:400px;" oninput="updateArtPosition(this.value)">
+      <br><br>
 
       <label for="title">Card Title:</label>
       <input type="text" id="title" name="title" oninput="updateText('cardTitle', this.value)" value="Card Title">
@@ -91,7 +93,7 @@
 
     <div id="cardContainer">
       <div id="cardArtClip">
-        <img id="cardArt" width="450" src="art/defaultart.jpg">
+        <img id="cardArt" src="art/defaultart.jpg" style="top:5px;left:6px;width:450px;height:450px;">
       </div>
       <div class="cardSection" id="cardElementBackground"></div>
       <div class="cardSection" id="cardElement"></div>
@@ -205,8 +207,26 @@
       hideRenderContainer();
     }
 
-    function updateArt(sectionId, value, format) {
-      document.getElementById('cardArt').style.backgroundImage = `url('`+ baseURL() +`art/${format.toLowerCase()}${value.toLowerCase()}')`;
+    function updateArtByURL(value){
+      var cardArtElement = document.getElementById('cardArt')
+      cardArtElement.src = value;
+      cardArtElement.height = 1000;
+    }
+
+    function updateArtPosition(cssText) {
+      const cardArt = document.getElementById('cardArt');
+      
+      // Split the cssText into individual style declarations
+      const styles = cssText.split(';').filter(style => style.trim().length > 0);
+      
+      // Clear existing inline styles
+      cardArt.style.cssText = '';
+
+      // Apply each style declaration to cardArt
+      styles.forEach(style => {
+          const [key, value] = style.split(':').map(part => part.trim());
+          cardArt.style[key] = value;
+      });
     }
 
     function updateStats(sectionId, value, format) {
@@ -261,12 +281,27 @@
       var height = $("#cardArt").height()
       $("#cardArt").width(width/0.9)
       $("#cardArt").height(height/0.9)
+      $("#artPosition").prop('value', getCssText(document.getElementById('cardArt')));
     }
     function shrinkArt(){
       var width = $("#cardArt").width()
       var height = $("#cardArt").height()
       $("#cardArt").width(width*0.9)
       $("#cardArt").height(height*0.9)
+      $("#artPosition").prop('value', getCssText(document.getElementById('cardArt')));
+    }
+
+    function getCssText(element) {
+        let cssText = '';
+        const style = element.style;
+
+        for (let i = 0; i < style.length; i++) {
+            const key = style[i];
+            const value = style.getPropertyValue(key);
+            cssText += `${key}:${value};`;
+        }
+
+        return cssText;
     }
 
     dragElement(document.getElementById("cardContainer"), document.getElementById("cardArt"));
@@ -297,13 +332,17 @@
         // set the element's new position:
         mover.style.top = (mover.offsetTop - pos2) + "px";
         mover.style.left = (mover.offsetLeft - pos1) + "px";
+        mover.style.height = (mover.height) + "px";
+        mover.style.width = (mover.width) + "px";
       }
 
       function closeDragElement() {
         // stop moving when mouse button is released:
         document.onmouseup = null;
         document.onmousemove = null;
+        $("#artPosition").prop('value', getCssText(document.getElementById('cardArt')));
       }
+
     }
 
     window.onload = function () {
@@ -339,7 +378,6 @@
             var reader = new FileReader();
             reader.onloadend = function() {
                  img.src = reader.result;
-
             }
             reader.readAsDataURL(file);
             $("#cardArt").replaceWith(img);
@@ -352,7 +390,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const urlParams = new URLSearchParams(window.location.search);
         const fields = [
-            'title', 'element', 'cost', 'subtype', 'typedesc',
+            'artURL', 'artPosition', 'title', 'element', 'cost', 'subtype', 'typedesc',
             'effect', 'power', 'life', 'durability', 'speed',
             'setrarity', 'copyright'
         ];
@@ -375,7 +413,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const renderButton = document.querySelector('button[onclick="render()"]');
         const fields = [
-            'title', 'element', 'cost', 'subtype', 'typedesc',
+            'artURL', 'artPosition', 'title', 'element', 'cost', 'subtype', 'typedesc',
             'effect', 'power', 'life', 'durability', 'speed',
             'setrarity', 'copyright'
         ];
