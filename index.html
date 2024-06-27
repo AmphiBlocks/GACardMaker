@@ -207,11 +207,34 @@
       hideRenderContainer();
     }
 
-    function updateArtByURL(value){
-      var cardArtElement = document.getElementById('cardArt')
-      cardArtElement.src = value;
-      cardArtElement.height = 1000;
-    }
+
+
+function updateArtByURL(value) {
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    const cardArtElement = document.getElementById('cardArt');
+
+    fetch(proxyUrl + value, {
+        headers: {
+            'Origin': window.location.origin
+        }
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const url = URL.createObjectURL(blob);
+        cardArtElement.crossOrigin = 'Anonymous'; // Enable CORS support
+        cardArtElement.src = url;
+        cardArtElement.onload = function() {
+            if (cardArtElement.height<400) cardArtElement.height*=400/cardArtElement.height;
+        };
+        cardArtElement.onerror = function() {
+            alert('Failed to load image. The server might not support CORS.');
+        };
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to load image. The server might not support CORS.');
+    });
+}
 
     function updateArtPosition(cssText) {
       const cardArt = document.getElementById('cardArt');
