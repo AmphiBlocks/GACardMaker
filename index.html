@@ -155,7 +155,7 @@
       <textarea id="copyright" name="copyright" oninput="updateText('cardCopyright', this.value)">©2024 Crux is Fine</textarea>
       <br><br>
 
-      <button type="button" onclick="render()">render</button>
+      <button id="renderButton" type="button" onclick="render()">render</button>
 
     </form>
   
@@ -212,7 +212,6 @@
 function updateArtByURL(value) {
     const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
     const cardArtElement = document.getElementById('cardArt');
-
     fetch(proxyUrl + value, {
         headers: {
             'Origin': window.location.origin
@@ -224,15 +223,40 @@ function updateArtByURL(value) {
         cardArtElement.crossOrigin = 'Anonymous'; // Enable CORS support
         cardArtElement.src = url;
         cardArtElement.onload = function() {
-            if (cardArtElement.height<400) cardArtElement.height*=400/cardArtElement.height;
+            // Adjust size here
+            const naturalWidth = cardArtElement.naturalWidth;
+            const naturalHeight = cardArtElement.naturalHeight;
+            const aspectRatio = naturalWidth / naturalHeight;
+
+            let newWidth = naturalWidth;
+            let newHeight = naturalHeight;
+
+            if (newHeight < 400) {
+                newHeight = 400;
+                newWidth = newHeight * aspectRatio;
+            }
+
+            if (newWidth < 450) {
+                newWidth = 450;
+                newHeight = newWidth / aspectRatio;
+            }
+
+            if (newWidth + parseInt(cardArtElement.style.left, 10)) cardArtElement.style.left="0px";
+            if (newHeight + parseInt(cardArtElement.style.top, 10)) cardArtElement.style.top="0px";
+
+            cardArtElement.style.width = `${newWidth}px`;
+            cardArtElement.style.height = `${newHeight}px`;
+
+            $("#artPosition").prop('value', getCssText(document.getElementById('cardArt')));
         };
         cardArtElement.onerror = function() {
-            alert('Failed to load image. The server might not support CORS.');
+          cardArtElement.src = value
+          $("#renderButton").attr("warn-cors", true)          
         };
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to load image. The server might not support CORS.');
+        cardArtElement.src = value
+        $("#renderButton").attr("warn-cors", true)          
     });
 }
 
@@ -288,7 +312,13 @@ function updateArtByURL(value) {
               $("#cardRenderContainer").fadeOut(1, function(){
 
                 document.getElementById("cardRenderContainer").style.visibility="visible";
-                document.getElementById("cardRenderResults").style.visibility="visible";                
+                document.getElementById("cardRenderResults").style.visibility="visible";
+                if ($("#renderButton").attr("warn-cors") == "true"){
+                  document.getElementById("cardRenderLog").innerHTML="If art is blank in the render go <a href='https://cors-anywhere.herokuapp.com/'>here</a> and press request. Use URL below to reload the page afterward."  
+                }
+                else {
+                  document.getElementById("cardRenderLog").innerText="Render Complete"  
+                }
                 $("#cardRenderContainer").fadeIn(1000);
               });
             });
