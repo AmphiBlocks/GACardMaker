@@ -241,8 +241,8 @@ function updateArtByURL(value) {
                 newHeight = newWidth / aspectRatio;
             }
 
-            if (newWidth + parseInt(cardArtElement.style.left, 10)) cardArtElement.style.left="0px";
-            if (newHeight + parseInt(cardArtElement.style.top, 10)) cardArtElement.style.top="0px";
+            if ((newWidth + parseInt(cardArtElement.style.left, 10)) < 400) cardArtElement.style.left="0px";
+            if ((newHeight + parseInt(cardArtElement.style.top, 10)) < 450) cardArtElement.style.top="0px";
 
             cardArtElement.style.width = `${newWidth}px`;
             cardArtElement.style.height = `${newHeight}px`;
