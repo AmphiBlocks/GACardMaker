@@ -210,39 +210,40 @@
     }
 
 
-function updateArtByURL(value) {
+    function updateArtByURL(value) {
     if(value == ""){
       return;
     }
 
     const cardArtElement = document.getElementById('cardArt');
-    cardArtElement.onload = function() {
-        
-        // Adjust size here
-        const naturalWidth = cardArtElement.naturalWidth;
-        const naturalHeight = cardArtElement.naturalHeight;
-        const aspectRatio = naturalWidth / naturalHeight;
+    if(suppress_for_initial_load == false){
+      cardArtElement.onload = function() {
+          // Adjust size here
+          const naturalWidth = cardArtElement.naturalWidth;
+          const naturalHeight = cardArtElement.naturalHeight;
+          const aspectRatio = naturalWidth / naturalHeight;
 
-        let newWidth = naturalWidth;
-        let newHeight = naturalHeight;
+          let newWidth = naturalWidth;
+          let newHeight = naturalHeight;
 
-        if (newHeight < 400) {
-            newHeight = 400;
-            newWidth = newHeight * aspectRatio;
-        }
+          if (newHeight < 400) {
+              newHeight = 400;
+              newWidth = newHeight * aspectRatio;
+          }
 
-        if (newWidth < 450) {
-            newWidth = 450;
-            newHeight = newWidth / aspectRatio;
-        }
+          if (newWidth < 450) {
+              newWidth = 450;
+              newHeight = newWidth / aspectRatio;
+          }
 
-        if ((newWidth + parseInt(cardArtElement.style.left, 10)) < 400) cardArtElement.style.left="0px";
-        if ((newHeight + parseInt(cardArtElement.style.top, 10)) < 450) cardArtElement.style.top="0px";
+          if ((newWidth + parseInt(cardArtElement.style.left, 10)) < 400) cardArtElement.style.left="0px";
+          if ((newHeight + parseInt(cardArtElement.style.top, 10)) < 450) cardArtElement.style.top="0px";
 
-        cardArtElement.style.width = `${newWidth}px`;
-        cardArtElement.style.height = `${newHeight}px`;
+          cardArtElement.style.width = `${newWidth}px`;
+          cardArtElement.style.height = `${newHeight}px`;
 
-        $("#artPosition").prop('value', getCssText(document.getElementById('cardArt')));
+          $("#artPosition").prop('value', getCssText(document.getElementById('cardArt')));
+      };
     };
 
     cardArtElement.src = value;
@@ -250,6 +251,8 @@ function updateArtByURL(value) {
     $('#renderButton').text("Generate Share URL");
     return;
 }
+
+    var suppress_for_initial_load = true
 
     function updateArtPosition(cssText) {
       const cardArt = document.getElementById('cardArt');
@@ -455,6 +458,7 @@ function updateArtByURL(value) {
                 updateField(field, urlParams.get(field));
             }
         });
+        suppress_for_initial_load == false;
     });
 
     document.addEventListener('DOMContentLoaded', function() {
