@@ -155,13 +155,14 @@
       <textarea id="copyright" name="copyright" oninput="updateText('cardCopyright', this.value)">©2024 Crux is Fine</textarea>
       <br><br>
 
+      <label id="renderWarning" style="visibility:hidden"> Can't Render using URL art, take a screenshot instead. </label>
       <button id="renderButton" type="button" onclick="render()">render</button>
 
     </form>
   
 </div>
 
-  <script src="html2canvas.js"></script>
+  <script src="html2canvas.min.js"></script>
   <script src="jquery-3.7.1.min.js"></script>
   <script>
     function baseURL() {
@@ -209,10 +210,11 @@
     }
 
 
-
-
-
 function updateArtByURL(value) {
+    if(value == ""){
+      return;
+    }
+
     const cardArtElement = document.getElementById('cardArt');
     cardArtElement.onload = function() {
         
@@ -243,28 +245,10 @@ function updateArtByURL(value) {
         $("#artPosition").prop('value', getCssText(document.getElementById('cardArt')));
     };
 
-    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-
-    if ($("#renderButton").attr("warn-cors") == "true" ) {
-      cardArtElement.src = value
-      return
-    }
-
-    fetch(proxyUrl + value, {
-        headers: {
-            'Origin': window.location.origin
-        }
-    })
-    .then(response => response.blob())
-    .then(blob => {
-        const url = URL.createObjectURL(blob);
-        cardArtElement.crossOrigin = 'Anonymous'; // Enable CORS support
-        cardArtElement.src = url;
-    })
-    .catch(error => {
-        $("#renderButton").attr("warn-cors", true)
-        updateArtByURL(value);
-    });
+    cardArtElement.src = value;
+    $('#renderWarning').css("visibility", "visible");
+    $('#renderButton').text("Generate Share URL");
+    return;
 }
 
     function updateArtPosition(cssText) {
@@ -298,7 +282,12 @@ function updateArtByURL(value) {
 
     function render(){
       if (document.getElementById("cardRenderContainer").style.visibility!="hidden"){
-        return
+        return;
+      }
+      if ($('#renderWarning').css("visibility") == "visible") {
+        document.getElementById("cardRenderLog").innerHTML="Share URL Generated."
+        document.getElementById("cardRenderResults").style.visibility="visible";
+        return;
       }
       
 
@@ -320,12 +309,7 @@ function updateArtByURL(value) {
 
                 document.getElementById("cardRenderContainer").style.visibility="visible";
                 document.getElementById("cardRenderResults").style.visibility="visible";
-                if ($("#renderButton").attr("warn-cors") == "true"){
-                  document.getElementById("cardRenderLog").innerHTML="If art is blank in the render go <a href='https://cors-anywhere.herokuapp.com/'>here</a> and press request. Use URL below to reload the page afterward."  
-                }
-                else {
-                  document.getElementById("cardRenderLog").innerText="Render Complete"  
-                }
+                document.getElementById("cardRenderLog").innerText="Render Complete"  
                 $("#cardRenderContainer").fadeIn(1000);
               });
             });
@@ -428,6 +412,9 @@ function updateArtByURL(value) {
       updateImage('cardDurability', 'stat-durability', '');
       
       $("#artupload").change(function(e) {
+        $("#artURL").prop('value', "");
+        $('#renderWarning').css("visibility", "hidden");
+        $('#renderButton').text("Render");
 
         for (var i = 0; i < e.originalEvent.srcElement.files.length; i++) {
             
