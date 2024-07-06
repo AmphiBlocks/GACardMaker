@@ -102,9 +102,9 @@
       <div class="cardSection" id="cardElement"></div>
       <div class="cardSection" id="cardTitle">Card Title</div>
       <div class="cardSection" id="cardTypeLine">
+        <span class="cardSection" id="cardTypeText">Ally - Tamer Ranger Animal Human</span>
         <span id="cardTypeBar"> <span class="cardSection" id="spacerCardTypeText">Ally - Tamer Ranger Animal Human</span></span>
         <span id="cardTypePoint">&nbsp</span>
-        <span class="cardSection" id="cardTypeText">Ally - Tamer Ranger Animal Human</span>
       </div>
       <div class="cardSection" id="cardType"></div>
       <div class="cardSection" id="cardCostBubble"></div>
@@ -162,15 +162,15 @@
       <br>
 
       <label for="setrarity">Card Set/Rarity:</label>
-      <textarea id="setrarity" name="setrarity" oninput="updateText('cardSetRarity', this.value)">FTC {dot} EN - 001 {ultra rare} {dot} illust: Bing Chilling</textarea>
+      <textarea id="setrarity" name="setrarity" oninput="updateText('cardSetRarity', this.value)">CUS {dot} EN - 001 {ultra rare} {dot} illust: Bing Chilling</textarea>
       <br>
 
       <label for="copyright">Copyright:</label>
       <textarea id="copyright" name="copyright" oninput="updateText('cardCopyright', this.value)">©2024 Crux is Fine</textarea>
       <br>
 
-      <label id="renderWarning" style="visibility:hidden"> Can't Render using URL art, take a screenshot instead. </label>
-      <button id="renderButton" type="button" onclick="render()">render</button>
+      <label id="renderWarning" style="visibility:visible"> Rendering temporarily disabled, take a screenshot instead. </label>
+      <button id="renderButton" type="button" onclick="render()">Generate Share URL</button>
 
     </form>
   
@@ -534,8 +534,10 @@
       const rect = spacer.getBoundingClientRect();
 
       // Position the text element to match the spacer
-      text.style.top = (rect.top-507) + 'px';
-      text.style.left = (rect.left-388) + 'px';
+      //text.style.top = ((rect.top)-542) + 'px';
+
+      //text.style.left = ((rect.left/4)) + 'px';
+      text.style.left = ((spacer.offsetLeft/4)+9) +'px'
       text.style.width = 400 + 'px';
 
       spacer.innerText = text.innerText.slice(0, -2)
@@ -569,8 +571,8 @@
       
       $("#artupload").change(function(e) {
         $("#artURL").prop('value', "");
-        $('#renderWarning').css("visibility", "hidden");
-        $('#renderButton').text("Render");
+        //$('#renderWarning').css("visibility", "hidden");
+        $('#renderButton').text("Generate Share URL (rendering disabled)");
 
         for (var i = 0; i < e.originalEvent.srcElement.files.length; i++) {
             

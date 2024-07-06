@@ -205,7 +205,8 @@ body {
 
 #cardTypeText {
   position:absolute;
-  bottom:0.5px;
+  float:left;
+  bottom:5.5px;
   opacity:1;
   z-index:1;
 } 
