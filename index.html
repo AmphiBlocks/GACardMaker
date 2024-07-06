@@ -162,6 +162,7 @@
         <option value="CSR">CSR</option>
       </select></td>
         <td><label id="csrEraser" class="pseudoButton" onclick="toggleEraserMode()">CSR-style Background Eraser</label></td>
+        <td><label>Brush Size</label></td><td><input id="eraserSize" type="number" value="20" style="width:50px"></td>
         <td><label id="revertEraser" class="pseudoButton" onclick="revertEraser()">Revert</label></td>
       </tr></table>      
 
@@ -276,7 +277,8 @@
         const rect = canvas.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        const radius = 20; // Eraser size
+        const eraserSizeInput = document.getElementById('eraserSize');
+        const radius = eraserSizeInput.value;
         const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
         gradient.addColorStop(0, 'rgba(0, 0, 0, 1)');
         gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
