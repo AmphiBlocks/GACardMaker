@@ -194,6 +194,8 @@
         ["{rare}","<img src='"+baseURL()+"images/rare.png'>"],
         ["{super rare}","<img src='"+baseURL()+"images/super rare.png'>"],
         ["{ultra rare}","<img src='"+baseURL()+"images/ultra rare.png'>"],
+        ["{collector super rare}","<img src='"+baseURL()+"images/collector super rare.png'>"],
+        ["{collector ultra rare}","<img src='"+baseURL()+"images/collector ultra rare.png'>"],
         ["{promotional rare}","<img src='"+baseURL()+"images/promotional rare.png'>"],
         ["{dot}","<img src='"+baseURL()+"images/dot.png'>"],
         ["{bonus}","<span class=\"effect__icon\">"],
@@ -335,8 +337,8 @@
         const cardElementBackground = document.getElementById('cardElementBackground');
 
         if (mode === 'CSR') {
-            const barWidth = cardTypeBar.offsetWidth+56;
-            cardElementBackground.style.clipPath = `polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 70.4%, 0% 67.5%, 10% 67.5%, 10% 70.4%, ${barWidth}px 70.4%, ${barWidth+16}px 67.5%,  ${barWidth}px 66.1%,  0% 66.1%)`;
+            const barWidth = cardTypeBar.offsetWidth+54;
+            cardElementBackground.style.clipPath = `polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 70.35%, 0% 67.5%, 10% 67.5%, 10% 70.35%, ${barWidth}px 70.35%, ${barWidth+13}px 67.5%,  ${barWidth}px 66.1%,  0% 66.1%)`;
 
         } else {
             cardElementBackground.style.clipPath = 'none';
