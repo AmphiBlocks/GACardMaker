@@ -31,9 +31,9 @@
 
       <label for="element">Card Element:</label>
       <select id="element" name="element" onchange="
-        updateImage('cardElementBackground', this.value, 'element-border-');
-        updateImage('cardTypeBar', this.value, 'element-bar-', 'webp');
-        updateImage('cardTypePoint', this.value, 'element-point-', 'webp');
+        updateImage('cardElementBackground', this.value, 'element-border-', true);
+        updateImage('cardTypeBar', this.value, 'element-bar-', false, 'webp');
+        updateImage('cardTypePoint', this.value, 'element-point-', false, 'webp');
       ">
         <option value="Norm">Norm</option>
         <option value="Fire">Fire</option>
@@ -49,8 +49,8 @@
         <option value="Tera">Tera</option>
         <option value="Umbra">Umbra</option>
         <option disabled value="Wrath">Wrath</option>
-        <option value="CSR">CSR</option>
       </select>
+
       <br><br>
 
       <label for="costbubble">Card Cost Type:</label>
@@ -150,13 +150,23 @@
       </select>
       <br><br>
 
+      <label for="printing">Card Printing:</label>
+      <select id="printing" name="printing" onchange="
+        updatePrinting(this.value);
+      ">
+        <option value="Regular">Regular</option>
+        <option disabled value="Extended">Extended</option>
+        <option value="CSR">CSR</option>
+      </select>      
+      <br>
+
       <label for="setrarity">Card Set/Rarity:</label>
       <textarea id="setrarity" name="setrarity" oninput="updateText('cardSetRarity', this.value)">FTC {dot} EN - 001 {ultra rare} {dot} illust: Bing Chilling</textarea>
-      <br><br>
+      <br>
 
       <label for="copyright">Copyright:</label>
       <textarea id="copyright" name="copyright" oninput="updateText('cardCopyright', this.value)">©2024 Crux is Fine</textarea>
-      <br><br>
+      <br>
 
       <label id="renderWarning" style="visibility:hidden"> Can't Render using URL art, take a screenshot instead. </label>
       <button id="renderButton" type="button" onclick="render()">render</button>
@@ -204,14 +214,132 @@
     function updateText(sectionId, value) {
       document.getElementById(sectionId).innerHTML = substituteTextForImages(value);
       hideRenderContainer();
+      updateElementClipping();
     }
 
-    // Function to change background image based on the selected element
-    function updateImage(sectionId, value, format, imagetype="png") {
-      document.getElementById(sectionId).style.backgroundImage = `url('`+ baseURL() +`images/${format.toLowerCase()}${value.toLowerCase()}.${imagetype}')`;
-      hideRenderContainer();
+    function updateImage(sectionId, value, format, respectprinting = false, imagetype = "png") {
+        const suffix = (respectprinting && document.getElementById('printing').value === 'CSR') ? '-csr' : '';
+        document.getElementById(sectionId).style.backgroundImage = `url('${baseURL()}images/${format.toLowerCase()}${value.toLowerCase()}${suffix}.${imagetype}')`;
+        hideRenderContainer();
     }
 
+    function updatePrinting(mode) {
+        const styles = {
+            whiteGlow: `
+                text-shadow: 0 0 5px rgba(255, 255, 255, 1), 
+                             0 0 10px rgba(255, 255, 255, 1),  
+                             0 0 15px rgba(255, 255, 255, 1),
+                             0 0 20px rgba(255, 255, 255, 1);
+            `,
+            whiteBoxGlow: `
+                box-shadow: 0 0 5px rgba(255, 255, 255, 1), 
+                             0 0 10px rgba(255, 255, 255, 1),  
+                             0 0 15px rgba(255, 255, 255, 1),
+                             0 0 20px rgba(255, 255, 255, 1); 
+            `,
+            blackGlow: `
+                text-shadow: 0 0 5px rgba(0, 0, 0, 1), 
+                             0 0 10px rgba(0, 0, 0, 1),  
+                             0 0 15px rgba(0, 0, 0, 1),
+                             0 0 20px rgba(0, 0, 0, 1);
+            `,
+            intenseWhiteGlow: `
+                text-shadow:  0 0 2px rgba(255, 255, 255, 1),   
+                              0 0 4px rgba(255, 255, 255, 1),   
+                              0 0 6px rgba(255, 255, 255, 0.8), 
+                              0 0 8px rgba(255, 255, 255, 0.6), 
+                              -1px -1px 0 rgba(255, 255, 255, 1), 
+                              1px -1px 0 rgba(255, 255, 255, 1), 
+                              -1px 1px 0 rgba(255, 255, 255, 1), 
+                              1px 1px 0 rgba(255, 255, 255, 1);  
+            `,
+            blackDropShadow: `
+              filter: drop-shadow(0 0 5px rgba(0, 0, 0, 1)) 
+                      drop-shadow(0 0 10px rgba(0, 0, 0, 1)) 
+                      drop-shadow(0 0 15px rgba(0, 0, 0, 1)) 
+                      drop-shadow(0 0 20px rgba(0, 0, 0, 1));  
+            `,
+            whiteDropShadow: `
+              filter: drop-shadow(0 0 5px rgba(255, 255, 255, 1)) 
+                      drop-shadow(0 0 10px rgba(255, 255, 255, 1)) 
+                      drop-shadow(0 0 15px rgba(255, 255, 255, 1)) 
+                      drop-shadow(0 0 20px rgba(255, 255, 255, 1));  
+            `,
+            noGlow: 'text-shadow: none;',
+            noBoxGlow: 'box-shadow: none;',
+            noDropShadow: 'filter:none;'
+        };
+
+        const fields = {
+            whiteGlow: [
+                '#cardTypeLine',
+                '#cardEffect'
+            ],
+            blackGlow: [
+                '#cardSetRarity',
+                '#cardCopyright'
+            ],
+            intenseWhiteGlow: [
+                '#cardTitle'
+            ],
+            whiteBoxGlow: [
+                '.effect__icon'
+            ],
+            blackDropShadow: [
+                '#cardSetRarity img'
+            ],
+            whiteDropShadow: [
+                '#cardEffect img'
+            ]
+        };
+
+        const applyStyle = (selectors, style, resetStyle) => {
+            selectors.forEach(selector => {
+                document.querySelectorAll(selector).forEach(element => {
+                    if (mode === 'CSR') {
+                        element.style.cssText += style;
+                    } else {
+                        element.style.cssText += resetStyle;
+                    }
+                });
+            });
+        };
+
+        applyStyle(fields.whiteGlow, styles.whiteGlow, styles.noGlow);
+        applyStyle(fields.blackGlow, styles.blackGlow, styles.noGlow);
+        applyStyle(fields.intenseWhiteGlow, styles.intenseWhiteGlow, styles.noGlow);
+        applyStyle(fields.whiteBoxGlow, styles.whiteBoxGlow, styles.noBoxGlow);
+        applyStyle(fields.blackDropShadow, styles.blackDropShadow, styles.noDropShadow);
+        applyStyle(fields.whiteDropShadow, styles.whiteDropShadow, styles.noDropShadow);
+
+        const element = document.getElementById('element').value;
+        const borderElement = document.getElementById('cardElementBackground');
+        if (mode === 'CSR') {
+            borderElement.style.backgroundImage = `url('${baseURL()}images/element-border-${element.toLowerCase()}-CSR.png')`;
+            document.getElementById('cardTypeBar').style.opacity = '0.5';
+            document.getElementById('cardTypePoint').style.opacity = '0.5';
+        } else {
+            borderElement.style.backgroundImage = `url('${baseURL()}images/element-border-${element.toLowerCase()}.png')`;
+            document.getElementById('cardTypeBar').style.opacity = '1';
+            document.getElementById('cardTypePoint').style.opacity = '1';
+        }
+        updateElementClipping();
+    }
+
+    function updateElementClipping() {
+        const mode = document.getElementById('printing').value;
+        const cardTypeBar = document.getElementById('cardTypeBar');
+        const cardTypePoint = document.getElementById('cardTypePoint');
+        const cardElementBackground = document.getElementById('cardElementBackground');
+
+        if (mode === 'CSR') {
+            const barWidth = cardTypeBar.offsetWidth+55;
+            cardElementBackground.style.clipPath = `polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 70.4%, 0% 67.5%, 10% 67.5%, 10% 70.4%, ${barWidth}px 70.4%, ${barWidth+12}px 67.5%,  ${barWidth}px 66.1%,  0% 66.1%)`;
+
+        } else {
+            cardElementBackground.style.clipPath = 'none';
+        }
+    }
 
     function updateArtByURL(value) {
     if(value == ""){
@@ -396,12 +524,12 @@
     }
 
     window.onload = function () {
-      updateImage('cardElementBackground', document.getElementById('element').value, 'element-border-');
+      updateImage('cardElementBackground', document.getElementById('element').value, 'element-border-', true);
       updateImage('cardType', document.getElementById('subtype').value, 'card-type-');
       updateImage('cardCostBubble', document.getElementById('costbubble').value, 'cost-');
      
-      updateImage('cardTypeBar', document.getElementById('element').value, 'element-bar-', 'webp');
-      updateImage('cardTypePoint', document.getElementById('element').value, 'element-point-', 'webp');
+      updateImage('cardTypeBar', document.getElementById('element').value, 'element-bar-', false, 'webp');
+      updateImage('cardTypePoint', document.getElementById('element').value, 'element-point-', false, 'webp');
 
       updateImage('cardCost', document.getElementById('cost').value, '')
 
