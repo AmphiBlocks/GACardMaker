@@ -46,6 +46,7 @@ body {
   position:relative;
   background-size: cover;
   cursor: move;
+  user-select: none;
 }
 
 #cardCoverContainer {
@@ -99,6 +100,7 @@ body {
   font-size: 27px;
   font-family: 'CardTitle', 'Linux Libertine Display O', serif;
   text-align: center;
+  z-index:10;
 }
 
 #cardArtClip {
@@ -113,7 +115,7 @@ body {
 
 #cardArt {
   position:relative;
-
+  z-index: 0;
 }
 
 #cardElementBackground {
@@ -122,6 +124,16 @@ body {
   background-size: cover;
   width: 500px;
   height: 700px;
+  z-index:1;
+}
+
+#combinedCanvas {
+  -webkit-border-radius:16px;
+  position: absolute;
+  background-size: cover;
+  width: 500px;
+  height: 700px;
+  z-index:1;
 }
 
 #cardElement {
@@ -134,7 +146,7 @@ body {
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
-
+  z-index:2;
 }
 
 #cardCostBubble {
@@ -150,6 +162,7 @@ body {
   background-repeat: no-repeat;
   background-size: contain;
   background-align: top;
+  z-index:2;
 }    
 
 #cardCost {
@@ -164,6 +177,7 @@ body {
   line-height: 40px;
   background-repeat: no-repeat;
   background-position: center;
+  z-index:3;
 }
 
 #cardTypeLine {
@@ -194,6 +208,7 @@ body {
   display: inline-block;
   background-size: cover;
   background-repeat: horizontal;
+  z-index:2;
 }
 
 #spacerCardTypeText {
@@ -208,7 +223,7 @@ body {
   float:left;
   bottom:5.5px;
   opacity:1;
-  z-index:1;
+  z-index:3;
 } 
 
 #cardTypePoint {
@@ -223,6 +238,7 @@ body {
   display: inline-block;
   background-size: contain;
   background-repeat: no-repeat;
+  z-index:2;
 }
 
 #cardEffectContainer {
@@ -237,6 +253,7 @@ body {
   letter-spacing: -0.4px;
   font-family: 'CardText', 'Linux Biolinum O', sans-serif;
   vertical-align: middle;
+  z-index:2;
 }
 
 #cardType {
@@ -248,6 +265,7 @@ body {
   background-repeat: no-repeat;
   background-position: bottom right;
   background-size: cover;
+  z-index:2;
 }
 
 #cardSpeed {
@@ -259,6 +277,7 @@ body {
   background-repeat: no-repeat;
   background-position: bottom right;
   background-size: contain;
+  z-index:2;
 }
 
 #cardStats {
@@ -269,12 +288,13 @@ body {
   height: 30px;
   align-items: right;
   align-content: right;
-
+  z-index:2;
 }
 
 #cardStatsFloater {
   float:right;
-  display:inline-block;  
+  display:inline-block;
+  z-index:2;
 }
 
 #cardPower, #cardLife, #cardDurability {
@@ -296,11 +316,13 @@ body {
   display: inline-block;
   vertical-align: middle;
   line-height: 20px;
+  z-index:3;
 }
 
 #cardEffect img {
   vertical-align: middle;
   padding: 0px 1px 4px 1px;
+  z-index:3;
 }
 
 .effect__icon {
@@ -314,6 +336,7 @@ body {
   offset-inline-start: 20px;
   text-align:top;
   text-shadow:none;
+  z-index:3;
 }
 
 #cardSetRarity {
@@ -329,7 +352,7 @@ body {
   font-size: 11px;
   vertical-align: middle;
   font-family: 'CardText', 'Linux Biolinum O', sans-serif;
-
+  z-index:2;
 }
 
 #cardSetRarity img {
@@ -352,6 +375,7 @@ body {
   letter-spacing:0.3px;
 
   font-family: 'CardText', 'Linux Biolinum O', sans-serif;      
+  z-index:2;
 }
 
 #cardForm label {

@@ -14,12 +14,12 @@
     <form id="cardForm">
       <table border=0 width="100%"><tr>
         <td><label for="artupload">Card Art:</label></td>
-        <td align="right"><label for="pseudoButton">(Resize and Drag to fit)</label></td>
+        <td align="right"><label>(Resize and Drag to fit)</label></td>
       </tr></table>
       <table border=0 width="100%"><tr>
         <td><input type="file" id="artupload" name="artupload" accept="image/*"/></td>
-        <td><label class="pseudoButton" onclick="growArt()">+</button></td>
-        <td><label class="pseudoButton" onclick="shrinkArt()">-</button></td>
+        <td><label class="pseudoButton" onclick="growArt()">+</label></td>
+        <td><label class="pseudoButton" onclick="shrinkArt()">-</label></td>
       </tr></table></span>
       <input id="artURL" value="Paste URL to image" onfocus="this.value=''" oninput="updateArtByURL(this.value)">
       <input id="artPosition" value="top:0px;left:0px;width:700px;height:500px;" oninput="updateArtPosition(this.value)">
@@ -96,9 +96,10 @@
 
     <div id="cardContainer">
       <div id="cardArtClip">
-        <img id="cardArt" src="art/csr-defaultart.png" style="top:0px;left:0px;width:500px;height:700px;">
+        <img id="cardArt" src="art/talldefault.png" style="top:0px;left:0px;width:500px;height:700px;">
       </div>
       <div class="cardSection" id="cardElementBackground"></div>
+      <canvas id="combinedCanvas"></canvas>
       <div class="cardSection" id="cardElement"></div>
       <div class="cardSection" id="cardTitle">Card Title</div>
       <div class="cardSection" id="cardTypeLine">
@@ -152,13 +153,18 @@
       <br><br>
 
       <label for="printing">Card Printing:</label>
-      <select id="printing" name="printing" onchange="
+      <table border=0 width="100%"><tr>
+        <td>      <select id="printing" name="printing" onchange="
         updatePrinting(this.value);
       ">
         <option value="Regular">Regular</option>
         <option disabled value="Extended">Extended</option>
         <option value="CSR">CSR</option>
-      </select>      
+      </select></td>
+        <td><label id="csrEraser" class="pseudoButton" onclick="toggleEraserMode()">CSR-style Background Eraser</label></td>
+        <td><label id="revertEraser" class="pseudoButton" onclick="revertEraser()">Revert</label></td>
+      </tr></table>      
+
       <br>
 
       <label for="setrarity">Card Set/Rarity:</label>
@@ -179,6 +185,154 @@
   <script src="html2canvas.min.js"></script>
   <script src="jquery-3.7.1.min.js"></script>
   <script>
+
+    let shouldErase = 0;
+    let eraseProgress = 0;
+    function toggleEraserMode() {
+        eraserButton = document.getElementById('csrEraser');
+        shouldErase = 1-shouldErase;
+        if (eraseProgress==0){
+          activateEraserMode();
+        }
+
+        if (shouldErase == 1){
+          eraseProgress=1
+          eraserButton.style.backgroundColor = "#Cff";
+          
+        } else {
+          eraserButton.style.backgroundColor = "#fff";
+        }
+    }
+
+    function activateEraserMode() {
+    
+      const cardContainer = document.getElementById('cardContainer');
+      const canvas = document.getElementById('combinedCanvas');
+      const bg_original = document.getElementById('cardElementBackground');
+      const clipPath = window.getComputedStyle(bg_original).clipPath;
+
+      const ctx = canvas.getContext('2d');
+      const image = new Image();
+      let bgImageStyle = bg_original.style.backgroundImage;
+      if (bgImageStyle.startsWith('url("')) {
+        bgImageStyle = bgImageStyle.slice(5, -2); // Removes `url("` at the beginning and `")` at the end
+      } else if (bgImageStyle.startsWith('url(')) {
+        bgImageStyle = bgImageStyle.slice(4, -1); // Removes `url(` at the beginning and `)` at the end
+      }
+      canvas.style.visibility='visible';
+      image.src = bgImageStyle;
+
+      image.onload = () => {
+        const offCanvas = document.createElement('canvas');
+        const offCtx = offCanvas.getContext('2d');
+        offCanvas.width = image.width;
+        offCanvas.height = image.height;
+
+        // Apply clipping to the off-screen canvas
+        applyClipPath(offCtx, clipPath, offCanvas.width, offCanvas.height);
+
+        // Draw the image onto the off-screen canvas
+        offCtx.drawImage(image, 0, 0);
+
+        // Draw the off-screen canvas onto the main canvas
+        canvas.width = offCanvas.width;
+        canvas.height = offCanvas.height;
+        ctx.drawImage(offCanvas, 0, 0);
+
+        // Render additional elements
+        renderElement(ctx, 'cardTypeBar', 0, () => {
+            renderElement(ctx, 'cardTypePoint', -15, () => {
+                    bg_original.style.visibility = 'hidden';
+                    const cardTypeBar = document.getElementById('cardTypeBar');
+                    cardTypeBar.style.visibility = 'hidden';
+                    const cardTypePoint = document.getElementById('cardTypePoint');
+                    cardTypePoint.style.visibility = 'hidden';
+            });
+         });
+      };
+
+      let isErasing = false;
+
+      cardContainer.addEventListener('mousedown', (e) => {
+        if (shouldErase){
+          isErasing = true;
+          erase(e);
+        }
+      });
+
+      cardContainer.addEventListener('mousemove', (e) => {
+        if (isErasing) erase(e);
+      });
+
+      cardContainer.addEventListener('mouseup', () => {
+        isErasing = false;
+      });
+
+      cardContainer.addEventListener('mouseleave', () => {
+        isErasing = false;
+      });
+
+      function erase(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const radius = 20; // Eraser size
+        const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+        gradient.addColorStop(0, 'rgba(0, 0, 0, 1)');
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function revertEraser(){
+      const canvas = document.getElementById('combinedCanvas');
+      canvas.style.visibility='hidden';
+      const bg_original = document.getElementById('cardElementBackground');
+      bg_original.style.visibility='visible';
+      const cardTypeBar = document.getElementById('cardTypeBar');
+      cardTypeBar.style.visibility = 'visible';
+      const cardTypePoint = document.getElementById('cardTypePoint');
+      cardTypePoint.style.visibility = 'visible';      
+      eraseProgress = 0;
+      shouldErase=0;
+      eraserButton = document.getElementById('csrEraser');
+      eraserButton.style.backgroundColor = "#fff";
+    }
+
+    // Function to apply clipPath to a canvas context
+    function applyClipPath(ctx, clipPath, width, height) {
+      if (clipPath.startsWith('polygon')) {
+        // Extract the points from the polygon clip-path
+        const points = clipPath.match(/([\d\.]+%?)/g).map(value => {
+          if (value.endsWith('%')) {
+            // Convert percentage values to pixel values
+            const percentage = parseFloat(value) / 100;
+            return percentage * (value.includes('left') || value.includes('right') ? width : height);
+          } else {
+            return parseFloat(value);
+          }
+        });
+
+        // Create a path based on the points
+        ctx.beginPath();
+        for (let i = 0; i < points.length; i += 2) {
+          const x = points[i];
+          const y = points[i + 1];
+          if (i === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+        ctx.closePath();
+        ctx.clip();
+      }
+    }
     function baseURL() {
       return "";
     }
@@ -336,7 +490,7 @@
 
         if (mode === 'CSR') {
             const barWidth = cardTypeBar.offsetWidth+54;
-            cardElementBackground.style.clipPath = `polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 70.35%, 0% 67.5%, 10% 67.5%, 10% 70.35%, ${barWidth}px 70.35%, ${barWidth+13}px 67.5%,  ${barWidth}px 66.1%,  0% 66.1%)`;
+            cardElementBackground.style.clipPath = `polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 70.35%, 0% 67.5%, 8% 67.5%, 8% 70.35%, ${barWidth}px 70.35%, ${barWidth+13}px 67.5%,  ${barWidth}px 66.1%,  0% 66.1%)`;
 
         } else {
             cardElementBackground.style.clipPath = 'none';
@@ -456,6 +610,31 @@
       
     }
 
+    function renderElement(ctx, elementId, widthoffset, callback) {
+        const element = document.getElementById(elementId);
+        const rect = element.getBoundingClientRect();
+        const cavnvas = document.getElementById('combinedCanvas');
+        const canvasRect = cavnvas.getBoundingClientRect();
+        const computedStyle = window.getComputedStyle(element);
+
+        ctx.save();
+        ctx.globalAlpha = parseFloat(computedStyle.opacity) || 1.0;
+
+        const img = new Image();
+        img.src = computedStyle.backgroundImage.slice(5, -2); // Extract URL
+        img.onload = () => {
+            ctx.drawImage(img, rect.left-canvasRect.left, rect.top-canvasRect.top, rect.width+widthoffset, rect.height);
+            ctx.restore();
+            console.log(`Rendered ${elementId}`);
+            if (callback) callback();
+        };
+        img.onerror = (e) => {
+            console.error(`Error loading image for ${elementId}`, e);
+            ctx.restore();
+            if (callback) callback();
+        };
+    }
+
     function growArt(){
       var width = $("#cardArt").width()
       var height = $("#cardArt").height()
@@ -491,6 +670,9 @@
         dragTarget.onmousedown = dragMouseDown;
 
       function dragMouseDown(e) {
+
+        if(shouldErase) return;
+
         e = e || window.event;
         e.preventDefault();
         // get the mouse cursor position at startup:
