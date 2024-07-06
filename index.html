@@ -102,8 +102,9 @@
       <div class="cardSection" id="cardElement"></div>
       <div class="cardSection" id="cardTitle">Card Title</div>
       <div class="cardSection" id="cardTypeLine">
-        <span id="cardTypeBar"> <span class="cardSection" id="cardTypeText">Ally - Tamer Ranger Animal Human</span></span>
+        <span id="cardTypeBar"> <span class="cardSection" id="spacerCardTypeText">Ally - Tamer Ranger Animal Human</span></span>
         <span id="cardTypePoint">&nbsp</span>
+        <span class="cardSection" id="cardTypeText">Ally - Tamer Ranger Animal Human</span>
       </div>
       <div class="cardSection" id="cardType"></div>
       <div class="cardSection" id="cardCostBubble"></div>
@@ -215,6 +216,7 @@
       document.getElementById(sectionId).innerHTML = substituteTextForImages(value);
       hideRenderContainer();
       updateElementClipping();
+      positionCardTypeText();
     }
 
     function updateImage(sectionId, value, format, respectprinting = false, imagetype = "png") {
@@ -333,8 +335,8 @@
         const cardElementBackground = document.getElementById('cardElementBackground');
 
         if (mode === 'CSR') {
-            const barWidth = cardTypeBar.offsetWidth+55;
-            cardElementBackground.style.clipPath = `polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 70.4%, 0% 67.5%, 10% 67.5%, 10% 70.4%, ${barWidth}px 70.4%, ${barWidth+12}px 67.5%,  ${barWidth}px 66.1%,  0% 66.1%)`;
+            const barWidth = cardTypeBar.offsetWidth+56;
+            cardElementBackground.style.clipPath = `polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 70.4%, 0% 67.5%, 10% 67.5%, 10% 70.4%, ${barWidth}px 70.4%, ${barWidth+16}px 67.5%,  ${barWidth}px 66.1%,  0% 66.1%)`;
 
         } else {
             cardElementBackground.style.clipPath = 'none';
@@ -520,8 +522,24 @@
         document.onmousemove = null;
         $("#artPosition").prop('value', getCssText(document.getElementById('cardArt')));
       }
-
     }
+
+    function positionCardTypeText() {
+      const spacer = document.getElementById('spacerCardTypeText');
+      const text = document.getElementById('cardTypeText');
+
+      // Get the position and dimensions of the spacer
+      const rect = spacer.getBoundingClientRect();
+
+      // Position the text element to match the spacer
+      text.style.top = (rect.top-507) + 'px';
+      text.style.left = (rect.left-388) + 'px';
+      text.style.width = 400 + 'px';
+
+      spacer.innerText = text.innerText.slice(0, -2)
+    }
+
+    window.onresize = positionCardTypeText;    
 
     window.onload = function () {
       updateImage('cardElementBackground', document.getElementById('element').value, 'element-border-', true);
@@ -544,6 +562,8 @@
       updateImage('cardPower', 'stat-power', '');
       updateImage('cardLife', 'stat-life', '');
       updateImage('cardDurability', 'stat-durability', '');
+
+      positionCardTypeText();
       
       $("#artupload").change(function(e) {
         $("#artURL").prop('value', "");
