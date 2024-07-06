@@ -22,7 +22,7 @@
         <td><label class="pseudoButton" onclick="shrinkArt()">-</button></td>
       </tr></table></span>
       <input id="artURL" value="Paste URL to image" onfocus="this.value=''" oninput="updateArtByURL(this.value)">
-      <input id="artPosition" value="top:5px;left:6px;width:450px;height:400px;" oninput="updateArtPosition(this.value)">
+      <input id="artPosition" value="top:0px;left:0px;width:700px;height:500px;" oninput="updateArtPosition(this.value)">
       <br><br>
 
       <label for="title">Card Title:</label>
@@ -71,7 +71,7 @@
       <label for="subtype">Card Type:</label>
       <select id="subtype" name="subtype" onchange="updateImage('cardType', this.value, 'card-type-')">
         <option value="Ally">Ally</option>
-        <option value="Skill">Skill</option>
+        <option value="Action">Action</option>
         <option value="Champion">Champion</option>
         <option value="Domain">Domain</option>
         <option value="Item">Item</option>
@@ -596,7 +596,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const fields = [
             'artURL', 'artPosition', 'title', 'element', 'cost', 'subtype', 'typedesc',
-            'effect', 'power', 'life', 'durability', 'speed',
+            'effect', 'power', 'life', 'durability', 'speed', 'printing',
             'setrarity', 'copyright'
         ];
 
@@ -620,7 +620,7 @@
         const renderButton = document.querySelector('button[onclick="render()"]');
         const fields = [
             'artURL', 'artPosition', 'title', 'element', 'cost', 'subtype', 'typedesc',
-            'effect', 'power', 'life', 'durability', 'speed',
+            'effect', 'power', 'life', 'durability', 'speed', 'printing',
             'setrarity', 'copyright'
         ];
 
