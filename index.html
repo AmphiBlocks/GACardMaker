@@ -55,17 +55,17 @@
 
       <label for="costbubble">Card Cost Type:</label>
       <select id="costbubble" name="costbubble" onchange="updateImage('cardCostBubble', this.value, 'cost-')">
-        <option value="Reserve">Reserve</option>
-        <option value="Memory">Memory</option>
         <option value="Champion-0">Level 0</option>
         <option value="Champion-1">Level 1</option>
         <option value="Champion-2">Level 2</option>
         <option value="Champion-3">Level 3</option>
+        <option value="Memory">Memory</option>
+        <option value="Reserve">Reserve</option>        
       </select>
       <br>
 
       <label for="cost">Card Cost:</label>
-      <input type="number" id="cost" value="0" name="cost" min="0" max="9" pattern="[0-9]" oninput="updateImage('cardCost', this.value, '')">
+      <input type="number" id="cost" value="" name="cost" min="0" max="9" pattern="[0-9]" oninput="updateImage('cardCost', this.value, '')">
       <br><br>
 
       <label for="subtype">Card Type:</label>
@@ -777,7 +777,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const urlParams = new URLSearchParams(window.location.search);
         const fields = [
-            'artURL', 'artPosition', 'title', 'element', 'cost', 'subtype', 'typedesc',
+            'artURL', 'artPosition', 'title', 'element', 'cost', 'costbubble', 'subtype', 'typedesc',
             'effect', 'power', 'life', 'durability', 'speed', 'printing',
             'setrarity', 'copyright'
         ];
@@ -801,7 +801,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const renderButton = document.querySelector('button[onclick="render()"]');
         const fields = [
-            'artURL', 'artPosition', 'title', 'element', 'cost', 'subtype', 'typedesc',
+            'artURL', 'artPosition', 'title', 'element', 'cost', 'costbubble', 'subtype', 'typedesc',
             'effect', 'power', 'life', 'durability', 'speed', 'printing',
             'setrarity', 'copyright'
         ];
